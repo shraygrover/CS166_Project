@@ -381,6 +381,73 @@ public class DBproject{
 	}
 
 	public static void AddAppointment(DBproject esql) {//3
+		try{
+                        String query = "INSERT INTO Appointment VALUES (";
+                        System.out.print("\tEnter the date of the appointment (YYYY-MM-DD): ");
+                        String adate = in.readLine();
+                        System.out.print("\tEnter the time slot of the appointment in military time (HH:MM-HH:MM): ");
+                        String time_slot = in.readLine();
+			int h1;
+			int m1;
+			int h2;
+			int m2;
+			while(true) {
+				try {
+                                        if(time_slot.substring(2,3).equals(":")) {
+						h1 = Integer.parseInt(time_slot.substring(0,2));
+						m1 = Integer.parseInt(time_slot.substring(3,5));
+						if(time_slot.substring(8,9).equals(":")) {
+							h2 = Integer.parseInt(time_slot.substring(6,8));
+                                                	m2 = Integer.parseInt(time_slot.substring(9,11));
+						}
+						else {
+							h2 = Integer.parseInt(time_slot.substring(6,7));
+                                                	m2 = Integer.parseInt(time_slot.substring(8,10));
+						}
+					}
+					else {
+						h1 = Integer.parseInt(time_slot.substring(0,1));
+						m1 = Integer.parseInt(time_slot.substring(2,4));
+						if(time_slot.substring(7,8).equals(":")) {
+                                                        h2 = Integer.parseInt(time_slot.substring(5,7));
+                                                        m2 = Integer.parseInt(time_slot.substring(8,10));
+                                                }
+                                                else {
+                                                        h2 = Integer.parseInt(time_slot.substring(5,6));
+                                                        m2 = Integer.parseInt(time_slot.substring(7,9));
+                                                }
+					}
+                                        if(h1 >= 0 && h1 < 25 && h2 >= 0 && h2 < 25 && m1 >= 0 && m1 < 60 && m2 >= 0 && m2 < 60) {
+						break;
+					}
+					else {
+						System.out.print("\t\tPlease enter a valid time slot (HH:MM-HH:MM): ");
+                                        	time_slot = in.readLine();
+					}
+                                }
+                                catch(NumberFormatException e2) {
+                                        System.out.print("\t\tPlease enter a valid time slot (HH:MM-HH:MM): ");
+                                        time_slot = in.readLine();
+                                }
+			}
+                        System.out.print("\tEnter the appointment's unique ID: ");
+                        String appnt_ID = in.readLine();
+                        System.out.print("\tEnter the appointment's status (PA, AC, AV, WL): ");
+                        String status = in.readLine();
+			while(!(status.equals("PA") || status.equals("AC") || status.equals("AV") || status.equals("WL"))) {
+				System.out.print("\t\tPlease enter a valid status value (PA, AC, AV, WL): ");
+                        	status = in.readLine();
+			}
+                        System.out.print("\n");
+                        query += appnt_ID + ", DATE \'" + adate + "\', \'" + time_slot + "\', \'" + status + "\');";
+                        esql.executeUpdate(query);
+                        System.out.print("Succesfully added Appointment!\n");
+                }
+                catch(Exception e) {
+                        System.out.print("Unable to add appointment. Please check if the Appointment ID is unique and that the date is correctly formatted.\n");
+                        System.err.println (e.getMessage());
+                }
+                System.out.print("\n");
 	}
 
 
