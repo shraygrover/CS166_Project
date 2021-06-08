@@ -372,7 +372,6 @@ public class DBproject{
                         System.out.print("Succesfully added Patient!\n");
                 }
                 catch(Exception e) {
-                        System.out.print("Unable to add patient. Please check if the Patient ID is unique.\n");
                         System.err.println (e.getMessage());
                 }
                 System.out.print("\n");
@@ -380,6 +379,7 @@ public class DBproject{
 
 	public static void AddAppointment(DBproject esql) {//3
 		try{
+			int appnt_ID = esql.executeQuery("SELECT * FROM Appointment;");
                         String query = "INSERT INTO Appointment VALUES (";
                         System.out.print("\tEnter the date of the appointment (YYYY-MM-DD): ");
                         String adate = in.readLine();
@@ -428,8 +428,6 @@ public class DBproject{
                                         time_slot = in.readLine();
                                 }
 			}
-                        System.out.print("\tEnter the appointment's unique ID: ");
-                        String appnt_ID = in.readLine();
                         System.out.print("\tEnter the appointment's status (PA, AC, AV, WL): ");
                         String status = in.readLine();
 			while(!(status.equals("PA") || status.equals("AC") || status.equals("AV") || status.equals("WL"))) {
@@ -442,7 +440,7 @@ public class DBproject{
                         System.out.print("Succesfully added Appointment!\n");
                 }
                 catch(Exception e) {
-                        System.out.print("Unable to add appointment. Please check if the Appointment ID is unique and that the date is correctly formatted.\n");
+                        System.out.print("Unable to add appointment. Please check that the date is correctly formatted.\n");
                         System.err.println (e.getMessage());
                 }
                 System.out.print("\n");
@@ -455,10 +453,50 @@ public class DBproject{
 
 	public static void ListAppointmentsOfDoctor(DBproject esql) {//5
 		// For a doctor ID and a date range, find the list of active and available appointments of the doctor
+		try{
+                        String query = "SELECT A.appnt_ID AS id, A.adate AS App_Date, A.time_slot AS Time_slot, A.status AS Status FROM has_appointment H, Appointment A WHERE H.doctor_id=";
+                        System.out.print("\tEnter Doctor's ID: ");
+                        String id = in.readLine();
+                        System.out.print("\tEnter beginning of date range (YYYY-MM-DD): ");
+                        String begin = in.readLine();
+                        System.out.print("\tEnter end of date range (YYYY-MM-DD): ");
+                        String end = in.readLine();
+                        System.out.print("\n");
+                        query += id + " AND H.appt_id=A.appnt_ID AND (A.adate BETWEEN ";
+			query += "\'" + begin + "\' AND \'" + end + "\') AND (A.status=\'AV\' OR A.status=\'AC\');";
+                        int rows = esql.executeQueryAndPrintResult(query);
+			if(rows == 0) {
+				System.out.print("There are no available or active appointments for this doctor in the specified date range.\n");
+			}
+                }
+                catch(Exception e) {
+			System.out.print("Invalid Query. Did you check if your dates are formatted correctly? Does the doctor ID exist?");
+                        System.err.println (e.getMessage());
+                }
+                System.out.print("\n");
 	}
 
 	public static void ListAvailableAppointmentsOfDepartment(DBproject esql) {//6
 		// For a department name and a specific date, find the list of available appointments of the department
+		try{
+                        String query = "SELECT A.appnt_ID AS id, A.adate AS App_Date, A.time_slot AS Time_slot, A.status AS Status FROM Department DP, Doctor DC, has_appointment H, Appointment A WHERE DP.name=";
+                        System.out.print("\tEnter Department Name: ");
+                        String name = in.readLine();
+                        System.out.print("\tEnter a date (YYYY-MM-DD): ");
+                        String date = in.readLine();
+                        System.out.print("\n");
+                        query += "\'" + name + "\' AND DP.dept_ID=DC.did AND DC.doctor_ID=H.doctor_id AND H.appt_id=A.appnt_ID AND A.adate=";
+                        query += "\'" + date + "\' AND A.status=\'AV\';";
+                        int rows = esql.executeQueryAndPrintResult(query);
+                        if(rows == 0) {
+                                System.out.print("There are no available appointments for this department on the specified date.\n");
+                        }
+                }
+                catch(Exception e) {
+			System.out.print("Invalid Query. Did you check if your date is formatted correctly? Does the department exist?");
+                        System.err.println (e.getMessage());
+                }
+                System.out.print("\n");
 	}
 
 	public static void ListStatusNumberOfAppointmentsPerDoctor(DBproject esql) {//7
