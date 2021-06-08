@@ -428,16 +428,10 @@ public class DBproject{
                                         time_slot = in.readLine();
                                 }
 			}
-                        System.out.print("\tEnter the appointment's status (PA, AC, AV, WL): ");
-                        String status = in.readLine();
-			while(!(status.equals("PA") || status.equals("AC") || status.equals("AV") || status.equals("WL"))) {
-				System.out.print("\t\tPlease enter a valid status value (PA, AC, AV, WL): ");
-                        	status = in.readLine();
-			}
                         System.out.print("\n");
-                        query += appnt_ID + ", DATE \'" + adate + "\', \'" + time_slot + "\', \'" + status + "\');";
+                        query += appnt_ID + ", DATE \'" + adate + "\', \'" + time_slot + "\', \'AV\');";
                         esql.executeUpdate(query);
-                        System.out.print("Succesfully added Appointment!\n");
+                        System.out.print("Succesfully added new available Appointment!\n");
                 }
                 catch(Exception e) {
                         System.out.print("Unable to add appointment. Please check that the date is correctly formatted.\n");
