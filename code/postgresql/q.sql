@@ -1,1 +1,1 @@
-select * from Appointment;
+select * from Patient;

@@ -168,7 +168,7 @@ public class DBproject{
 		int rowCount = 0;
 
 		//iterates through the result set and count nuber of results.
-		if(rs.next()){
+		while(rs.next()){
 			rowCount++;
 		}//end while
 		stmt.close ();
@@ -299,22 +299,21 @@ public class DBproject{
 
 	public static void AddDoctor(DBproject esql) {//1
 		try{
+			int doctor_id = esql.executeQuery("SELECT * FROM Doctor;");
                         String query = "INSERT INTO Doctor VALUES (";
                         System.out.print("\tEnter Doctor's name: ");
                         String name = in.readLine();
                         System.out.print("\tEnter Doctor's specialty: ");
                         String specialty = in.readLine();
-                        System.out.print("\tEnter Doctor's unique ID: ");
-                        String doctor_ID = in.readLine();
                         System.out.print("\tEnter Doctor's department ID: ");
                         String did = in.readLine();
 			System.out.print("\n");
-                        query += doctor_ID + ", \'" + name + "\', \'" + specialty + "\', " + did + ");";
+                        query += doctor_id + ", \'" + name + "\', \'" + specialty + "\', " + did + ");";
                         esql.executeUpdate(query);
 			System.out.print("Succesfully added Doctor!\n");
                 }
                 catch(Exception e) {
-			System.out.print("Unable to add doctor. Please check if the Doctor ID is unique or the department ID exists.\n");
+			System.out.print("Unable to add doctor. Check if the Department ID is valid.\n");
 			System.err.println (e.getMessage());
                 }
 		System.out.print("\n");
@@ -322,6 +321,7 @@ public class DBproject{
 
 	public static void AddPatient(DBproject esql) {//2
 		try {	
+			int patient_ID = esql.executeQuery("SELECT * FROM Patient;");
                         String query = "INSERT INTO Patient VALUES (";
                         System.out.print("\tEnter Patient's name: ");
                         String name = in.readLine();
@@ -350,8 +350,6 @@ public class DBproject{
 			}
 			System.out.print("\tEnter Patient's address: ");
                         String address = in.readLine();
-                        System.out.print("\tEnter Patient's unique ID: ");
-                        String patient_ID = in.readLine();
                         System.out.print("\tEnter Patient's number of appointments: ");
                         String numAppointments = in.readLine();
 			while(true) {
