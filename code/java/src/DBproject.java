@@ -350,24 +350,8 @@ public class DBproject{
 			}
 			System.out.print("\tEnter Patient's address: ");
                         String address = in.readLine();
-                        System.out.print("\tEnter Patient's number of appointments: ");
-                        String numAppointments = in.readLine();
-			while(true) {
-                                try {
-                                        x = Integer.parseInt(numAppointments);
-                                        if(x < 0) {
-                                                System.out.print("\t\tPlease enter an appointment value 0 or above: ");
-                                                numAppointments = in.readLine();
-                                        }
-                                        else { break; }
-                                }
-                                catch(NumberFormatException e3) {
-                                	System.out.print("\t\tPlease enter an appointment value 0 or above: ");
-                                        numAppointments = in.readLine();
-                                }
-                        }
                         System.out.print("\n");
-                        query += patient_ID + ", \'" + name + "\', \'" + gender + "\', " + age + ", \'" + address + "\', " + numAppointments + ");";
+                        query += patient_ID + ", \'" + name + "\', \'" + gender + "\', " + age + ", \'" + address + "\', 0);";
                         esql.executeUpdate(query);
                         System.out.print("Succesfully added Patient!\n");
                 }
@@ -443,6 +427,81 @@ public class DBproject{
 
 	public static void MakeAppointment(DBproject esql) {//4
 		// Given a patient, a doctor and an appointment of the doctor that s/he wants to take, add an appointment to the DB
+		try{
+                        System.out.print("\tEnter Patient's name: ");
+                        String name = in.readLine();
+                        System.out.print("\tEnter Patient's gender (M/F): ");
+                        String gender = in.readLine();
+                        while(!(gender.equals("M") || gender.equals("F"))) {
+                                System.out.print("\t\tPlease enter a gender value of 'M' or 'F': ");
+                                gender = in.readLine();
+                        }
+                        System.out.print("\tEnter Patient's age: ");
+                        String age = in.readLine();
+                        int x;
+                        while(true) {
+                                try {
+                                        x = Integer.parseInt(age);
+                                        if(x < 0) {
+                                                System.out.print("\t\tPlease enter a positive integer value for age: ");
+                                                age = in.readLine();
+                                        }
+                                        else { break; }
+                                }
+                                catch(NumberFormatException e2) {
+                                        System.out.print("\t\tPlease enter a positive integer value for age: ");
+                                        age = in.readLine();
+                                }
+                        }
+			System.out.print("\tEnter Patient's address: ");
+                        String address = in.readLine();
+			System.out.print("\tEnter Doctor's ID: ");
+                        String doc_id = in.readLine();
+			int rows = executeQuery("SELECT * FROM Doctor A WHERE A.doctor_ID=" + doc_id + ";");
+                        if(rows == 0) {
+				System.out.print("\tInvaild Doctor ID. Exiting...\n");
+                        }
+			else {
+				System.out.print("\tEnter Appointment ID: ");
+                        	String app_id = in.readLine();
+				rows = executeQuery("SELECT * FROM Appointment A WHERE A.appnt_ID=" + app_id + ";");
+				if(rows == 0) {
+					System.out.print("\tInvaild Appointment ID. Exiting...\n");
+				}
+				else {
+					String query = "SELECT P.patient_ID FROM Patient P WHERE P.name=\'";
+					query += name + "\' AND P.age=" + age + " AND P.gender=\'" + gender + "\' AND P.address=\'" + address + "\';";
+					List<List<String>> list = executeQueryAndReturnResult(query);
+					boolean passedPatient = true;
+					if(list.size() == 1) {
+						int patient_ID = Integer.parseInt(list.get(0).get(0));
+						//Update patient numApp
+					}
+					else if(list.size() == 0) {
+						int patient_ID = esql.executeQuery("SELECT * FROM Patient;");
+						String query = "INSERT INTO Patient VALUES (";
+						//Insert new patient
+					}
+					else {
+						System.out.print("\tDuplicate Patient. Please Fix. Exiting...\n");
+						passedPatient = false;
+					}
+					if(passedPatient) {
+						//Update appointment status to AC if AV
+						//Update to WL if AC
+						//Update to WL if WL
+						//Error if past
+						//Update searches table and has_appointment
+						//?????????????
+					}
+				}
+                	}
+		}
+                catch(Exception e) {
+                        System.out.print("Unable to make appointment.\n");
+                        System.err.println (e.getMessage());
+                }
+                System.out.print("\n");
 	}
 
 	public static void ListAppointmentsOfDoctor(DBproject esql) {//5
